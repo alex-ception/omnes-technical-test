@@ -1,0 +1,16 @@
+# Environnement de secours si PHP n'est pas installé sur votre poste.
+# L'image composer:2 embarque PHP 8.5, Composer et git.
+#
+#   docker compose run --rm php composer install
+#   docker compose run --rm php composer setup
+#   docker compose run --rm php composer test
+#   docker compose up            # puis http://localhost:8000/sessions
+services:
+  php:
+    image: composer:2
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: php -S 0.0.0.0:8000 -t public

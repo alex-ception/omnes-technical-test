@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Gestion des sessions{% endblock %}</title>
+        <style>
+            :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+            body { margin: 0; padding: 2rem; max-width: 60rem; margin-inline: auto; line-height: 1.5; }
+            table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+            th, td { padding: .5rem .75rem; border-bottom: 1px solid #8884; text-align: left; }
+            th { font-weight: 600; }
+            td.nombre { text-align: right; font-variant-numeric: tabular-nums; }
+            tr.complet td { opacity: .6; }
+            .badge { display: inline-block; padding: .1rem .5rem; border-radius: 1rem; font-size: .8rem; background: #c33; color: #fff; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <strong>Centre de formation</strong> · gestion des sessions
+        </header>
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>

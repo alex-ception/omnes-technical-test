@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sessions de formation{% endblock %}
+
+{% block body %}
+    <h1>Sessions de formation</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Formation</th>
+                <th>Dates</th>
+                <th>Capacité</th>
+                <th>Places restantes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+                {% set places = session.capacite - session.inscriptions|length %}
+                <tr data-session-code="{{ session.code }}" class="{{ places <= 0 ? 'complet' : '' }}">
+                    <td>{{ session.code }}</td>
+                    <td>{{ session.formation.titre }}</td>
+                    <td>du {{ session.dateDebut|date('d/m/Y') }} au {{ session.dateFin|date('d/m/Y') }}</td>
+                    <td class="nombre">{{ session.capacite }}</td>
+                    <td class="nombre" data-test="places-restantes">{{ places }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">Aucune session programmée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
