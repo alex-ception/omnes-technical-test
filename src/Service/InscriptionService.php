@@ -35,7 +35,9 @@ final class InscriptionService
             ));
         }
 
-        $inscription = new Inscription($session, $stagiaire, StatutInscription::CONFIRMEE);
+        $statut = $session->estComplete() ? StatutInscription::LISTE_ATTENTE : StatutInscription::CONFIRMEE;
+
+        $inscription = new Inscription($session, $stagiaire, $statut);
 
         $this->entityManager->persist($inscription);
         $this->entityManager->flush();
