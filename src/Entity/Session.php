@@ -14,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'session_formation')]
 class Session
 {
+    /** Nombre maximal de personnes en liste d'attente quand la session est complète. */
+    public const int LIMITE_LISTE_ATTENTE = 2;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -100,16 +103,17 @@ class Session
      */
     public function getPlacesRestantes(): int
     {
-        $confirmees = $this->inscriptions->filter(
-            static fn (Inscription $inscription): bool => StatutInscription::CONFIRMEE === $inscription->getStatut(),
-        );
-
-        return $this->capacite - $confirmees->count();
+        return $this->capacite - $this->compterInscriptions(StatutInscription::CONFIRMEE);
     }
 
     public function estComplete(): bool
     {
         return $this->getPlacesRestantes() <= 0;
+    }
+
+    public function estListeAttentePleine(): bool
+    {
+        return $this->compterInscriptions(StatutInscription::LISTE_ATTENTE) >= self::LIMITE_LISTE_ATTENTE;
     }
 
     /** @internal Appelée par le constructeur d'Inscription pour garder la collection cohérente. */
@@ -118,5 +122,12 @@ class Session
         if (!$this->inscriptions->contains($inscription)) {
             $this->inscriptions->add($inscription);
         }
+    }
+
+    private function compterInscriptions(StatutInscription $statut): int
+    {
+        return $this->inscriptions->filter(
+            static fn (Inscription $inscription): bool => $statut === $inscription->getStatut(),
+        )->count();
     }
 }

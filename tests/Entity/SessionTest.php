@@ -70,6 +70,38 @@ final class SessionTest extends TestCase
         self::assertTrue($session->estComplete());
     }
 
+    public function testLaListeDAttenteNEstPasPleineEnDessousDeDeuxPersonnes(): void
+    {
+        $session = $this->uneSession(capacite: 1);
+
+        new Inscription($session, $this->unStagiaire('a'), StatutInscription::CONFIRMEE);
+        new Inscription($session, $this->unStagiaire('b'), StatutInscription::LISTE_ATTENTE);
+
+        self::assertFalse($session->estListeAttentePleine());
+    }
+
+    public function testLaListeDAttenteEstPleineADeuxPersonnes(): void
+    {
+        $session = $this->uneSession(capacite: 1);
+
+        new Inscription($session, $this->unStagiaire('a'), StatutInscription::CONFIRMEE);
+        new Inscription($session, $this->unStagiaire('b'), StatutInscription::LISTE_ATTENTE);
+        new Inscription($session, $this->unStagiaire('c'), StatutInscription::LISTE_ATTENTE);
+
+        self::assertTrue($session->estListeAttentePleine());
+    }
+
+    public function testUneInscriptionAnnuleeNeComptePasDansLaListeDAttente(): void
+    {
+        $session = $this->uneSession(capacite: 1);
+
+        new Inscription($session, $this->unStagiaire('a'), StatutInscription::CONFIRMEE);
+        new Inscription($session, $this->unStagiaire('b'), StatutInscription::LISTE_ATTENTE);
+        new Inscription($session, $this->unStagiaire('c'), StatutInscription::ANNULEE);
+
+        self::assertFalse($session->estListeAttentePleine());
+    }
+
     private function uneSession(int $capacite): Session
     {
         return new Session(

@@ -35,6 +35,13 @@ final class InscriptionService
             ));
         }
 
+        if ($session->estComplete() && $session->estListeAttentePleine()) {
+            throw new InscriptionImpossibleException(sprintf(
+                'La session %s est complète et sa liste d\'attente est pleine.',
+                $session->getCode(),
+            ));
+        }
+
         $statut = $session->estComplete() ? StatutInscription::LISTE_ATTENTE : StatutInscription::CONFIRMEE;
 
         $inscription = new Inscription($session, $stagiaire, $statut);
