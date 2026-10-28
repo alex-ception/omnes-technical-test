@@ -28,6 +28,21 @@ final class SessionApiControllerTest extends WebTestCase
         }
     }
 
+    public function testLApiRenvoieLesPlacesRestantes(): void
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/sessions');
+
+        $sessions = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+        $placesParCode = array_column($sessions, 'places_restantes', 'code');
+
+        // SYMF-ADV-01 : capacité 5, 2 inscriptions confirmées et 2 annulées.
+        self::assertSame(3, $placesParCode['SYMF-ADV-01']);
+        // DOCK-DEV-01 : capacité 2, 1 confirmée, 1 annulée et 1 en liste d'attente.
+        self::assertSame(1, $placesParCode['DOCK-DEV-01']);
+    }
+
     public function testUnStagiaireSInscritViaLApi(): void
     {
         $client = static::createClient();

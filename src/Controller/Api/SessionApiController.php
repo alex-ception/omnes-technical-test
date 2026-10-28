@@ -32,7 +32,7 @@ final class SessionApiController extends AbstractController
                 'date_debut' => $session->getDateDebut()->format('Y-m-d'),
                 'date_fin' => $session->getDateFin()->format('Y-m-d'),
                 'capacite' => $session->getCapacite(),
-                'places_restantes' => $session->getCapacite() - count($session->getInscriptions()),
+                'places_restantes' => $session->getPlacesRestantes(),
             ];
         }
 
