@@ -17,7 +17,7 @@
         </thead>
         <tbody>
             {% for session in sessions %}
-                {% set places = session.capacite - session.inscriptions|length %}
+                {% set places = session.placesRestantes %}
                 <tr data-session-code="{{ session.code }}" class="{{ places <= 0 ? 'complet' : '' }}">
                     <td>{{ session.code }}</td>
                     <td>{{ session.formation.titre }}</td>
