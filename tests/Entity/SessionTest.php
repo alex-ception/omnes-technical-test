@@ -50,6 +50,26 @@ final class SessionTest extends TestCase
         self::assertSame(3, $session->getPlacesRestantes());
     }
 
+    public function testUneSessionAvecDesPlacesRestantesNEstPasComplete(): void
+    {
+        $session = $this->uneSession(capacite: 2);
+
+        new Inscription($session, $this->unStagiaire('a'), StatutInscription::CONFIRMEE);
+        new Inscription($session, $this->unStagiaire('b'), StatutInscription::ANNULEE);
+
+        self::assertFalse($session->estComplete());
+    }
+
+    public function testUneSessionSansPlaceRestanteEstComplete(): void
+    {
+        $session = $this->uneSession(capacite: 2);
+
+        new Inscription($session, $this->unStagiaire('a'), StatutInscription::CONFIRMEE);
+        new Inscription($session, $this->unStagiaire('b'), StatutInscription::CONFIRMEE);
+
+        self::assertTrue($session->estComplete());
+    }
+
     private function uneSession(int $capacite): Session
     {
         return new Session(

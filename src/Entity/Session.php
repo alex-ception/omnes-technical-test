@@ -107,6 +107,11 @@ class Session
         return $this->capacite - $confirmees->count();
     }
 
+    public function estComplete(): bool
+    {
+        return $this->getPlacesRestantes() <= 0;
+    }
+
     /** @internal Appelée par le constructeur d'Inscription pour garder la collection cohérente. */
     public function addInscription(Inscription $inscription): void
     {

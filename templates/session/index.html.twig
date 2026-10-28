@@ -17,13 +17,12 @@
         </thead>
         <tbody>
             {% for session in sessions %}
-                {% set places = session.placesRestantes %}
-                <tr data-session-code="{{ session.code }}" class="{{ places <= 0 ? 'complet' : '' }}">
+                <tr data-session-code="{{ session.code }}" class="{{ session.estComplete ? 'complet' : '' }}">
                     <td>{{ session.code }}</td>
                     <td>{{ session.formation.titre }}</td>
                     <td>du {{ session.dateDebut|date('d/m/Y') }} au {{ session.dateFin|date('d/m/Y') }}</td>
                     <td class="nombre">{{ session.capacite }}</td>
-                    <td class="nombre" data-test="places-restantes">{{ places }}</td>
+                    <td class="nombre" data-test="places-restantes">{{ session.placesRestantes }}</td>
                 </tr>
             {% else %}
                 <tr><td colspan="5">Aucune session programmée.</td></tr>
