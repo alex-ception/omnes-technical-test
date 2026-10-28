@@ -35,7 +35,16 @@ final class InscriptionService
             ));
         }
 
-        $inscription = new Inscription($session, $stagiaire, StatutInscription::CONFIRMEE);
+        if ($session->estComplete() && $session->estListeAttentePleine()) {
+            throw new InscriptionImpossibleException(sprintf(
+                'La session %s est complète et sa liste d\'attente est pleine.',
+                $session->getCode(),
+            ));
+        }
+
+        $statut = $session->estComplete() ? StatutInscription::LISTE_ATTENTE : StatutInscription::CONFIRMEE;
+
+        $inscription = new Inscription($session, $stagiaire, $statut);
 
         $this->entityManager->persist($inscription);
         $this->entityManager->flush();

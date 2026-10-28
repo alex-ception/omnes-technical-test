@@ -39,6 +39,34 @@ final class InscriptionServiceTest extends KernelTestCase
         );
     }
 
+    public function testUnStagiaireEstInscritEnListeDAttenteSiLaSessionEstComplete(): void
+    {
+        self::bootKernel();
+
+        // PHP-MOD-01 : capacité 3, 3 inscriptions confirmées, personne en liste d'attente.
+        $inscription = $this->service()->inscrire(
+            $this->stagiaire('alice.martin@exemple.fr'),
+            $this->session('PHP-MOD-01'),
+        );
+
+        self::assertNotNull($inscription->getId());
+        self::assertSame(StatutInscription::LISTE_ATTENTE, $inscription->getStatut());
+    }
+
+    public function testLInscriptionEstRefuseeSiLaListeDAttenteEstPleine(): void
+    {
+        self::bootKernel();
+
+        // PHP-MOD-01 est complète : Alice et Bruno remplissent la liste d'attente.
+        $session = $this->session('PHP-MOD-01');
+        $this->service()->inscrire($this->stagiaire('alice.martin@exemple.fr'), $session);
+        $this->service()->inscrire($this->stagiaire('bruno.petit@exemple.fr'), $session);
+
+        $this->expectException(InscriptionImpossibleException::class);
+
+        $this->service()->inscrire($this->stagiaire('chloe.durand@exemple.fr'), $session);
+    }
+
     private function service(): InscriptionService
     {
         return static::getContainer()->get(InscriptionService::class);
