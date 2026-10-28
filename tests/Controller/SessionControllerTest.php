@@ -30,4 +30,16 @@ final class SessionControllerTest extends WebTestCase
 
         self::assertSame('3', trim($places));
     }
+
+    public function testLaListeSignaleLesSessionsCompletes(): void
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/sessions');
+
+        // PHP-MOD-01 : capacité 3, 3 inscriptions confirmées.
+        self::assertSame('complet', $crawler->filter('tr[data-session-code="PHP-MOD-01"]')->attr('class'));
+        // DOCK-DEV-01 : capacité 2, une seule inscription confirmée (les autres sont annulée ou en liste d'attente).
+        self::assertSame('', $crawler->filter('tr[data-session-code="DOCK-DEV-01"]')->attr('class'));
+    }
 }

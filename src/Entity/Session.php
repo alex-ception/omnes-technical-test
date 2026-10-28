@@ -94,6 +94,24 @@ class Session
         return $this->inscriptions;
     }
 
+    /**
+     * Seules les inscriptions confirmées consomment une place : une inscription annulée
+     * libère la sienne et une inscription en liste d'attente n'en consomme pas.
+     */
+    public function getPlacesRestantes(): int
+    {
+        $confirmees = $this->inscriptions->filter(
+            static fn (Inscription $inscription): bool => StatutInscription::CONFIRMEE === $inscription->getStatut(),
+        );
+
+        return $this->capacite - $confirmees->count();
+    }
+
+    public function estComplete(): bool
+    {
+        return $this->getPlacesRestantes() <= 0;
+    }
+
     /** @internal Appelée par le constructeur d'Inscription pour garder la collection cohérente. */
     public function addInscription(Inscription $inscription): void
     {
