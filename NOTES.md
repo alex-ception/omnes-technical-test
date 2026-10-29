@@ -31,6 +31,11 @@ Aucune fixture modifiée, aucune dépendance Composer ajoutée. `composer test` 
 - fournit les bus de commandes et de requêtes, la découverte des handlers par attribut (`#[AsMessageHandler]`) et un middleware de transaction Doctrine, qu'un bus maison devrait réimplémenter et tester ;
 - utilisé uniquement en mode synchrone (deux bus, `command.bus` et `query.bus`, sans transport) : pas d'infrastructure supplémentaire, et une bascule vers de l'asynchrone resterait possible sans toucher aux handlers.
 
+Elle ajoute aussi une dépendance de développement, `deptrac/deptrac` :
+
+- vérifie automatiquement, à chaque `composer test`, les dépendances entre couches et contextes (domaine pur, application sans framework hors Messenger, `Shared` indépendant des contextes) : sans outil, ces règles ne tiennent que par la relecture ;
+- uniquement en `require-dev`, donc absent de la production ; il installe `phpstan/phpstan`, qu'il utilise pour analyser le code (PHPStan lui-même n'est pas configuré dans le projet).
+
 ## Usage de l'IA
 
 Quels outils vous avez utilisés. Ce que l'IA a proposé qui était faux, incomplet ou hors conventions, et comment vous l'avez corrigé.

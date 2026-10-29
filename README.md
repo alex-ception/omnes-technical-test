@@ -38,7 +38,8 @@ docker compose up        # http://localhost:8000/sessions
 | Commande | Effet |
 |---|---|
 | `composer setup` | Recrée la base de dev et recharge les fixtures |
-| `composer test` | Recrée la base de test, recharge les fixtures, lance PHPUnit |
+| `composer test` | Vérifie les dépendances entre couches (deptrac), recrée la base de test, recharge les fixtures, lance PHPUnit |
+| `php vendor/bin/deptrac analyse` | Lance deptrac seul |
 | `php bin/phpunit` | Relance PHPUnit seul (la base de test doit exister) |
 | `php bin/phpunit --filter NomDuTest` | Lance un seul test |
 | `php bin/console debug:router` | Liste les routes |
@@ -77,6 +78,8 @@ tests/                       PHPUnit, même arborescence que src/ : Domain (unit
 ```
 
 Les commandes et les requêtes passent par `symfony/messenger`, en mode synchrone : `command.bus` (avec transaction Doctrine) et `query.bus`, sans transport.
+
+Les dépendances autorisées entre couches et contextes sont décrites dans `deptrac.yaml` et vérifiées par `composer test` : le domaine ne dépend que du domaine, l'application ne dépend du framework que par Messenger, et `Shared` ne dépend d'aucun contexte métier.
 
 Base de données : SQLite, un fichier par environnement dans `var/`. Pas de migrations : le schéma est créé depuis les entités Doctrine par `composer setup`.
 
