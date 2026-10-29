@@ -27,6 +27,7 @@ final class InscriptionService
      * Inscrit un stagiaire à une session.
      *
      * @throws InscriptionImpossibleException si une règle métier empêche l'inscription
+     * @throws \DomainException               toute autre exception métier levée par le handler
      */
     public function inscrire(Stagiaire $stagiaire, Session $session): Inscription
     {
@@ -34,7 +35,7 @@ final class InscriptionService
             $enveloppe = $this->commandBus->dispatch(new InscrireStagiaire($session->getCode(), $stagiaire->getEmail()));
         } catch (HandlerFailedException $e) {
             // Messenger enveloppe les exceptions du handler : on remonte l'exception métier telle quelle.
-            foreach ($e->getWrappedExceptions(InscriptionImpossibleException::class) as $exception) {
+            foreach ($e->getWrappedExceptions(\DomainException::class, true) as $exception) {
                 throw $exception;
             }
 

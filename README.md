@@ -63,7 +63,8 @@ src/
         Entity/              Modèle de persistance : entités Doctrine, mapping par attributs PHP
         Mapper/              Conversion des entités Doctrine en objets du domaine
         Repository/          Implémentations Doctrine des repositories du domaine
-      Http/                  Une action invokable par route (page HTML, et API JSON dans Api/)
+      Http/                  Une action invokable par route (page HTML, et API JSON dans Api/) ;
+                             ExceptionSubscriber traduit les exceptions de l'API en JSON {"erreur": "..."}
   Shared/
     Application/             Briques communes (BusDeRequetes)
   DataFixtures/              Jeu de données de démonstration, utilisé aussi par les tests
