@@ -8,6 +8,9 @@ use App\Exception\InscriptionImpossibleException;
 use App\Repository\SessionRepository;
 use App\Repository\StagiaireRepository;
 use App\Service\InscriptionService;
+use App\Session\Application\Query\ListerSessions;
+use App\Session\Application\Query\ResumeSession;
+use App\Shared\Application\BusDeRequetes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,18 +24,19 @@ use Symfony\Component\Routing\Attribute\Route;
 final class SessionApiController extends AbstractController
 {
     #[Route('', name: 'api_sessions', methods: ['GET'])]
-    public function liste(SessionRepository $sessions): JsonResponse
+    public function liste(BusDeRequetes $requetes): JsonResponse
     {
         $donnees = [];
 
-        foreach ($sessions->findAllAvecFormation() as $session) {
+        /** @var ResumeSession $session */
+        foreach ($requetes->demander(new ListerSessions()) as $session) {
             $donnees[] = [
-                'code' => $session->getCode(),
-                'formation' => $session->getFormation()->getTitre(),
-                'date_debut' => $session->getDateDebut()->format('Y-m-d'),
-                'date_fin' => $session->getDateFin()->format('Y-m-d'),
-                'capacite' => $session->getCapacite(),
-                'places_restantes' => $session->getPlacesRestantes(),
+                'code' => $session->code,
+                'formation' => $session->formation,
+                'date_debut' => $session->dateDebut->format('Y-m-d'),
+                'date_fin' => $session->dateFin->format('Y-m-d'),
+                'capacite' => $session->capacite,
+                'places_restantes' => $session->placesRestantes,
             ];
         }
 

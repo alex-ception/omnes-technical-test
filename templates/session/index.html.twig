@@ -17,9 +17,9 @@
         </thead>
         <tbody>
             {% for session in sessions %}
-                <tr data-session-code="{{ session.code }}" class="{{ session.estComplete ? 'complet' : '' }}">
+                <tr data-session-code="{{ session.code }}" class="{{ session.complete ? 'complet' : '' }}">
                     <td>{{ session.code }}</td>
-                    <td>{{ session.formation.titre }}</td>
+                    <td>{{ session.formation }}</td>
                     <td>du {{ session.dateDebut|date('d/m/Y') }} au {{ session.dateFin|date('d/m/Y') }}</td>
                     <td class="nombre">{{ session.capacite }}</td>
                     <td class="nombre" data-test="places-restantes">{{ session.placesRestantes }}</td>

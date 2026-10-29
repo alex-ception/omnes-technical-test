@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Repository\SessionRepository;
+use App\Session\Application\Query\ListerSessions;
+use App\Shared\Application\BusDeRequetes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,10 +19,10 @@ final class SessionController extends AbstractController
     }
 
     #[Route('/sessions', name: 'app_sessions', methods: ['GET'])]
-    public function index(SessionRepository $sessions): Response
+    public function index(BusDeRequetes $requetes): Response
     {
         return $this->render('session/index.html.twig', [
-            'sessions' => $sessions->findAllAvecFormation(),
+            'sessions' => $requetes->demander(new ListerSessions()),
         ]);
     }
 }
