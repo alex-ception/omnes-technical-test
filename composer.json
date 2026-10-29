@@ -5,9 +5,9 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.3",
-        "ext-pdo_sqlite": "*",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-pdo_sqlite": "*",
         "doctrine/doctrine-bundle": "^2.19",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.7",
@@ -15,6 +15,7 @@
         "symfony/dotenv": "7.4.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.4.*",
+        "symfony/messenger": "7.4.*",
         "symfony/runtime": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/validator": "7.4.*",

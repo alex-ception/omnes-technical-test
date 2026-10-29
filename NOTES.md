@@ -25,6 +25,12 @@ Comment vous avez abordé le ticket, dans quel ordre, ce que vous avez vérifié
 
 Aucune fixture modifiée, aucune dépendance Composer ajoutée. `composer test` : 25 tests, 68 assertions, sans dépréciation.
 
+**Branche `feat/ddd-cqrs`** (hors ticket, issue #5) : restructuration en DDD avec séparation commandes/requêtes. Elle ajoute une dépendance, `symfony/messenger`, justifiée ainsi :
+
+- composant officiel de Symfony, versionné avec le framework (7.4) et maintenu ; il n'apporte que `symfony/clock` et l'interface `psr/clock` ;
+- fournit les bus de commandes et de requêtes, la découverte des handlers par attribut (`#[AsMessageHandler]`) et un middleware de transaction Doctrine, qu'un bus maison devrait réimplémenter et tester ;
+- utilisé uniquement en mode synchrone (deux bus, `command.bus` et `query.bus`, sans transport) : pas d'infrastructure supplémentaire, et une bascule vers de l'asynchrone resterait possible sans toucher aux handlers.
+
 ## Usage de l'IA
 
 Quels outils vous avez utilisés. Ce que l'IA a proposé qui était faux, incomplet ou hors conventions, et comment vous l'avez corrigé.

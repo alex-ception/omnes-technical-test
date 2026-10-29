@@ -1,0 +1,10 @@
+# Bus synchrones : les commandes (écriture) et les requêtes (lecture) sont traitées
+# immédiatement, dans le processus de la requête HTTP. Aucun transport asynchrone.
+framework:
+    messenger:
+        default_bus: command.bus
+        buses:
+            command.bus:
+                middleware:
+                    - doctrine_transaction
+            query.bus: ~
