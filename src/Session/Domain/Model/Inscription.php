@@ -13,7 +13,7 @@ final class Inscription
         private readonly Stagiaire $stagiaire,
         private StatutInscription $statut = StatutInscription::CONFIRMEE,
         ?\DateTimeImmutable $dateInscription = null,
-        private readonly ?int $id = null,
+        private ?int $id = null,
     ) {
         $this->dateInscription = $dateInscription ?? new \DateTimeImmutable();
 
