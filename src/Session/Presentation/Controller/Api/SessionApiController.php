@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Api;
+namespace App\Session\Presentation\Controller\Api;
 
-use App\Service\InscriptionService;
+use App\Session\Application\InscriptionService;
 use App\Session\Application\Query\ListerSessions;
 use App\Session\Application\Query\ResumeSession;
 use App\Session\Domain\Exception\InscriptionImpossibleException;

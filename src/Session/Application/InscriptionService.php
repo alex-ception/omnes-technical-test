@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Session\Application;
 
 use App\Session\Application\Command\InscrireStagiaire;
 use App\Session\Domain\Exception\InscriptionImpossibleException;

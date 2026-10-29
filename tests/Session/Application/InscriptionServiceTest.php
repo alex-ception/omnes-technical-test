@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Service;
+namespace App\Tests\Session\Application;
 
-use App\Service\InscriptionService;
+use App\Session\Application\InscriptionService;
 use App\Session\Domain\Exception\InscriptionImpossibleException;
 use App\Session\Domain\Model\StatutInscription;
 use App\Session\Domain\Repository\SessionRepository;
