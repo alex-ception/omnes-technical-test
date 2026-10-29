@@ -7,16 +7,19 @@ namespace App\Service;
 use App\Entity\Inscription;
 use App\Entity\Session;
 use App\Entity\Stagiaire;
-use App\Entity\StatutInscription;
 use App\Exception\InscriptionImpossibleException;
-use App\Repository\InscriptionRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Session\Application\Command\InscrireStagiaire;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
+/**
+ * Façade conservée pour le portail stagiaire : délègue l'inscription à la commande InscrireStagiaire.
+ */
 final class InscriptionService
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly InscriptionRepository $inscriptions,
+        private readonly MessageBusInterface $commandBus,
     ) {
     }
 
@@ -27,28 +30,20 @@ final class InscriptionService
      */
     public function inscrire(Stagiaire $stagiaire, Session $session): Inscription
     {
-        if ($this->inscriptions->existeInscriptionActive($stagiaire, $session)) {
-            throw new InscriptionImpossibleException(sprintf(
-                '%s est déjà inscrit(e) à la session %s.',
-                $stagiaire->getEmail(),
-                $session->getCode(),
-            ));
+        try {
+            $enveloppe = $this->commandBus->dispatch(new InscrireStagiaire($session->getCode(), $stagiaire->getEmail()));
+        } catch (HandlerFailedException $e) {
+            // Messenger enveloppe les exceptions du handler : on remonte l'exception métier telle quelle.
+            foreach ($e->getWrappedExceptions(InscriptionImpossibleException::class) as $exception) {
+                throw $exception;
+            }
+
+            throw $e;
         }
 
-        if ($session->estComplete() && $session->estListeAttentePleine()) {
-            throw new InscriptionImpossibleException(sprintf(
-                'La session %s est complète et sa liste d\'attente est pleine.',
-                $session->getCode(),
-            ));
-        }
+        /** @var HandledStamp $resultat */
+        $resultat = $enveloppe->last(HandledStamp::class);
 
-        $statut = $session->estComplete() ? StatutInscription::LISTE_ATTENTE : StatutInscription::CONFIRMEE;
-
-        $inscription = new Inscription($session, $stagiaire, $statut);
-
-        $this->entityManager->persist($inscription);
-        $this->entityManager->flush();
-
-        return $inscription;
+        return $resultat->getResult();
     }
 }
