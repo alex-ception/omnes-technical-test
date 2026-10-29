@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Session\Application\Query;
 
-use App\Entity\Session;
+use App\Session\Domain\Model\Session;
 
 /**
  * Vue en lecture seule d'une session, pour la liste des sessions (page et API).

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Inscription;
-use App\Entity\Session;
-use App\Entity\Stagiaire;
-use App\Exception\InscriptionImpossibleException;
 use App\Session\Application\Command\InscrireStagiaire;
+use App\Session\Domain\Exception\InscriptionImpossibleException;
+use App\Session\Domain\Model\Inscription;
+use App\Session\Domain\Model\Session;
+use App\Session\Domain\Model\Stagiaire;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;

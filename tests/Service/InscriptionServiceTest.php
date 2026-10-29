@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Entity\StatutInscription;
-use App\Exception\InscriptionImpossibleException;
-use App\Repository\SessionRepository;
-use App\Repository\StagiaireRepository;
 use App\Service\InscriptionService;
+use App\Session\Domain\Exception\InscriptionImpossibleException;
+use App\Session\Domain\Model\StatutInscription;
+use App\Session\Domain\Repository\SessionRepository;
+use App\Session\Domain\Repository\StagiaireRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class InscriptionServiceTest extends KernelTestCase
@@ -72,17 +72,17 @@ final class InscriptionServiceTest extends KernelTestCase
         return static::getContainer()->get(InscriptionService::class);
     }
 
-    private function session(string $code): \App\Entity\Session
+    private function session(string $code): \App\Session\Domain\Model\Session
     {
-        $session = static::getContainer()->get(SessionRepository::class)->findOneByCode($code);
+        $session = static::getContainer()->get(SessionRepository::class)->trouverParCode($code);
         self::assertNotNull($session, sprintf('Session %s absente des fixtures.', $code));
 
         return $session;
     }
 
-    private function stagiaire(string $email): \App\Entity\Stagiaire
+    private function stagiaire(string $email): \App\Session\Domain\Model\Stagiaire
     {
-        $stagiaire = static::getContainer()->get(StagiaireRepository::class)->findOneByEmail($email);
+        $stagiaire = static::getContainer()->get(StagiaireRepository::class)->trouverParEmail($email);
         self::assertNotNull($stagiaire, sprintf('Stagiaire %s absent des fixtures.', $email));
 
         return $stagiaire;

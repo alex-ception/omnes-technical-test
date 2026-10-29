@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Session\Application\Command;
 
-use App\Entity\StatutInscription;
-use App\Exception\InscriptionImpossibleException;
 use App\Session\Application\Command\InscrireStagiaire;
 use App\Session\Application\Command\InscrireStagiaireHandler;
+use App\Session\Domain\Exception\InscriptionImpossibleException;
+use App\Session\Domain\Model\StatutInscription;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class InscrireStagiaireHandlerTest extends KernelTestCase

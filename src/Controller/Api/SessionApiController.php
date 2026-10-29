@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Exception\InscriptionImpossibleException;
-use App\Repository\SessionRepository;
-use App\Repository\StagiaireRepository;
 use App\Service\InscriptionService;
 use App\Session\Application\Query\ListerSessions;
 use App\Session\Application\Query\ResumeSession;
+use App\Session\Domain\Exception\InscriptionImpossibleException;
+use App\Session\Domain\Repository\SessionRepository;
+use App\Session\Domain\Repository\StagiaireRepository;
 use App\Shared\Application\BusDeRequetes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +51,7 @@ final class SessionApiController extends AbstractController
         StagiaireRepository $stagiaires,
         InscriptionService $inscriptionService,
     ): JsonResponse {
-        $session = $sessions->findOneByCode($code);
+        $session = $sessions->trouverParCode($code);
         if (null === $session) {
             return $this->json(['erreur' => sprintf('Session %s inconnue.', $code)], Response::HTTP_NOT_FOUND);
         }
@@ -61,7 +61,7 @@ final class SessionApiController extends AbstractController
             return $this->json(['erreur' => 'Le champ "email" est obligatoire.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $stagiaire = $stagiaires->findOneByEmail($email);
+        $stagiaire = $stagiaires->trouverParEmail($email);
         if (null === $stagiaire) {
             return $this->json(['erreur' => sprintf('Stagiaire %s inconnu.', $email)], Response::HTTP_NOT_FOUND);
         }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Session\Application\Query;
 
-use App\Repository\SessionRepository;
+use App\Session\Domain\Repository\SessionRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(bus: 'query.bus')]
@@ -20,6 +20,6 @@ final readonly class ListerSessionsHandler
      */
     public function __invoke(ListerSessions $requete): array
     {
-        return array_map(ResumeSession::depuisSession(...), $this->sessions->findAllAvecFormation());
+        return array_map(ResumeSession::depuisSession(...), $this->sessions->listerParDateDeDebut());
     }
 }
