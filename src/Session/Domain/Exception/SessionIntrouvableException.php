@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Session\Domain\Exception;
 
-final class SessionIntrouvableException extends \DomainException
+use App\Shared\Domain\Exception\RessourceIntrouvableException;
+
+final class SessionIntrouvableException extends \DomainException implements RessourceIntrouvableException
 {
     public function __construct(string $code)
     {

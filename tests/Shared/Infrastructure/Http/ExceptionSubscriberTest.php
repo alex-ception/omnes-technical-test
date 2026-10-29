@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Session\Infrastructure\Http;
+namespace App\Tests\Shared\Infrastructure\Http;
 
-use App\Session\Domain\Exception\InscriptionImpossibleException;
-use App\Session\Domain\Exception\SessionIntrouvableException;
-use App\Session\Domain\Exception\StagiaireIntrouvableException;
-use App\Session\Infrastructure\Http\ExceptionSubscriber;
+use App\Shared\Domain\Exception\RegleMetierEnfreinteException;
+use App\Shared\Domain\Exception\RessourceIntrouvableException;
+use App\Shared\Infrastructure\Http\ExceptionSubscriber;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +27,16 @@ final class ExceptionSubscriberTest extends TestCase
      */
     public static function exceptionsConnues(): iterable
     {
-        yield 'inscription impossible' => [new InscriptionImpossibleException('La session est pleine.'), 409, 'La session est pleine.'];
-        yield 'session introuvable' => [new SessionIntrouvableException('INCONNUE-01'), 404, 'Session INCONNUE-01 inconnue.'];
-        yield 'stagiaire introuvable' => [new StagiaireIntrouvableException('inconnu@exemple.fr'), 404, 'Stagiaire inconnu@exemple.fr inconnu.'];
+        yield 'règle métier enfreinte' => [
+            new class('La session est pleine.') extends \DomainException implements RegleMetierEnfreinteException {},
+            409,
+            'La session est pleine.',
+        ];
+        yield 'ressource introuvable' => [
+            new class('Session INCONNUE-01 inconnue.') extends \DomainException implements RessourceIntrouvableException {},
+            404,
+            'Session INCONNUE-01 inconnue.',
+        ];
         yield 'exception HTTP' => [new BadRequestHttpException('Le champ "email" est obligatoire.'), 400, 'Le champ "email" est obligatoire.'];
     }
 
@@ -59,7 +65,10 @@ final class ExceptionSubscriberTest extends TestCase
 
     public function testLesPagesHorsApiSontLaisseesASymfony(): void
     {
-        $evenement = $this->evenement('/sessions', new SessionIntrouvableException('INCONNUE-01'));
+        $evenement = $this->evenement(
+            '/sessions',
+            new class('Session INCONNUE-01 inconnue.') extends \DomainException implements RessourceIntrouvableException {},
+        );
 
         (new ExceptionSubscriber())->onKernelException($evenement);
 

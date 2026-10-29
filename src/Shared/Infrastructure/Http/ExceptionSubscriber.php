@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Session\Infrastructure\Http;
+namespace App\Shared\Infrastructure\Http;
 
-use App\Session\Domain\Exception\InscriptionImpossibleException;
-use App\Session\Domain\Exception\SessionIntrouvableException;
-use App\Session\Domain\Exception\StagiaireIntrouvableException;
+use App\Shared\Domain\Exception\RegleMetierEnfreinteException;
+use App\Shared\Domain\Exception\RessourceIntrouvableException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,13 +20,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final class ExceptionSubscriber implements EventSubscriberInterface
 {
-    /** Code HTTP de chaque exception métier. */
-    private const array CODES = [
-        InscriptionImpossibleException::class => Response::HTTP_CONFLICT,
-        SessionIntrouvableException::class => Response::HTTP_NOT_FOUND,
-        StagiaireIntrouvableException::class => Response::HTTP_NOT_FOUND,
-    ];
-
     public static function getSubscribedEvents(): array
     {
         return [KernelEvents::EXCEPTION => 'onKernelException'];
@@ -40,9 +32,12 @@ final class ExceptionSubscriber implements EventSubscriberInterface
         }
 
         $exception = $evenement->getThrowable();
-        $code = $exception instanceof HttpExceptionInterface
-            ? $exception->getStatusCode()
-            : self::CODES[$exception::class] ?? null;
+        $code = match (true) {
+            $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
+            $exception instanceof RessourceIntrouvableException => Response::HTTP_NOT_FOUND,
+            $exception instanceof RegleMetierEnfreinteException => Response::HTTP_CONFLICT,
+            default => null,
+        };
 
         if (null === $code) {
             return;

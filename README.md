@@ -63,10 +63,13 @@ src/
         Entity/              Modèle de persistance : entités Doctrine, mapping par attributs PHP
         Mapper/              Conversion des entités Doctrine en objets du domaine
         Repository/          Implémentations Doctrine des repositories du domaine
-      Http/                  Une action invokable par route (page HTML, et API JSON dans Api/) ;
-                             ExceptionSubscriber traduit les exceptions de l'API en JSON {"erreur": "..."}
-  Shared/
-    Application/             Briques communes (BusDeRequetes)
+      Http/                  Une action invokable par route (page HTML, et API JSON dans Api/)
+  Shared/                    Briques communes à tous les contextes
+    Domain/Exception/        Interfaces RessourceIntrouvableException et RegleMetierEnfreinteException,
+                             implémentées par les exceptions métier des contextes
+    Application/             BusDeRequetes
+    Infrastructure/Http/     ExceptionSubscriber : traduit les exceptions de l'API en JSON {"erreur": "..."}
+                             (404, 409, ou le code d'une exception HTTP de Symfony)
   DataFixtures/              Jeu de données de démonstration, utilisé aussi par les tests
 templates/                   Vues Twig
 tests/                       PHPUnit, même arborescence que src/ : Domain (unitaires), Application
