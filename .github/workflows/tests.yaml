@@ -1,0 +1,25 @@
+name: Tests
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+jobs:
+    tests:
+        name: composer test
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            # PHP 8.3 : la version minimale ciblée par le projet (config.platform.php dans composer.json).
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+                  extensions: pdo_sqlite, ctype, iconv, mbstring
+                  coverage: none
+
+            - uses: ramsey/composer-install@v3
+
+            - run: composer test
