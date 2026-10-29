@@ -64,7 +64,7 @@ src/
         Mapper/              Conversion des entités Doctrine en objets du domaine
         Repository/          Implémentations Doctrine des repositories du domaine
     Presentation/
-      Controller/            Controllers HTTP (page HTML et API JSON)
+      Http/                  Une action invokable par route (page HTML, et API JSON dans Api/)
   Shared/
     Application/             Briques communes (BusDeRequetes)
   DataFixtures/              Jeu de données de démonstration, utilisé aussi par les tests

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Session\Presentation\Controller;
+namespace App\Tests\Session\Presentation\Http;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-final class SessionControllerTest extends WebTestCase
+final class ListeSessionsActionTest extends WebTestCase
 {
     public function testLaListeDesSessionsSAffiche(): void
     {
