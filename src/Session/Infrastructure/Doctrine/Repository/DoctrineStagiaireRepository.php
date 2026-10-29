@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Session\Infrastructure\Doctrine\Repository;
 
-use App\Entity\Stagiaire as StagiaireEntite;
 use App\Session\Domain\Model\Stagiaire;
 use App\Session\Domain\Repository\StagiaireRepository;
+use App\Session\Infrastructure\Doctrine\Entity\Stagiaire as StagiaireEntite;
 use App\Session\Infrastructure\Doctrine\Mapper\StagiaireMapper;
 use Doctrine\ORM\EntityManagerInterface;
 

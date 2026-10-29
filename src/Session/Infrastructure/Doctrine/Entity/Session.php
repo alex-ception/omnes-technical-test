@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Session\Infrastructure\Doctrine\Entity;
 
-use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SessionRepository::class)]
+/**
+ * Modèle de persistance Doctrine. Les règles métier vivent dans App\Session\Domain\Model\Session,
+ * les mappers font la conversion.
+ */
+#[ORM\Entity]
 #[ORM\Table(name: 'session_formation')]
 class Session
 {
-    /** Nombre maximal de personnes en liste d'attente quand la session est complète. */
-    public const int LIMITE_LISTE_ATTENTE = 2;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -97,37 +97,11 @@ class Session
         return $this->inscriptions;
     }
 
-    /**
-     * Seules les inscriptions confirmées consomment une place : une inscription annulée
-     * libère la sienne et une inscription en liste d'attente n'en consomme pas.
-     */
-    public function getPlacesRestantes(): int
-    {
-        return $this->capacite - $this->compterInscriptions(StatutInscription::CONFIRMEE);
-    }
-
-    public function estComplete(): bool
-    {
-        return $this->getPlacesRestantes() <= 0;
-    }
-
-    public function estListeAttentePleine(): bool
-    {
-        return $this->compterInscriptions(StatutInscription::LISTE_ATTENTE) >= self::LIMITE_LISTE_ATTENTE;
-    }
-
     /** @internal Appelée par le constructeur d'Inscription pour garder la collection cohérente. */
     public function addInscription(Inscription $inscription): void
     {
         if (!$this->inscriptions->contains($inscription)) {
             $this->inscriptions->add($inscription);
         }
-    }
-
-    private function compterInscriptions(StatutInscription $statut): int
-    {
-        return $this->inscriptions->filter(
-            static fn (Inscription $inscription): bool => $statut === $inscription->getStatut(),
-        )->count();
     }
 }

@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Session\Infrastructure\Doctrine\Entity;
 
-use App\Repository\StagiaireRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: StagiaireRepository::class)]
+/**
+ * Modèle de persistance Doctrine. Les règles métier vivent dans App\Session\Domain\Model\Stagiaire,
+ * les mappers font la conversion.
+ */
+#[ORM\Entity]
 class Stagiaire
 {
     #[ORM\Id]
@@ -49,10 +52,5 @@ class Stagiaire
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    public function getNomComplet(): string
-    {
-        return $this->prenom.' '.$this->nom;
     }
 }

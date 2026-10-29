@@ -2,13 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Session\Infrastructure\Doctrine\Entity;
 
-use App\Repository\InscriptionRepository;
+use App\Session\Domain\Model\StatutInscription;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: InscriptionRepository::class)]
+/**
+ * Modèle de persistance Doctrine. Les règles métier vivent dans App\Session\Domain\Model\Inscription,
+ * les mappers font la conversion.
+ */
+#[ORM\Entity]
 class Inscription
 {
     #[ORM\Id]
@@ -67,10 +71,5 @@ class Inscription
     public function getDateInscription(): \DateTimeImmutable
     {
         return $this->dateInscription;
-    }
-
-    public function annuler(): void
-    {
-        $this->statut = StatutInscription::ANNULEE;
     }
 }

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Session\Infrastructure\Doctrine\Mapper;
 
-use App\Entity\Session as SessionEntite;
 use App\Session\Domain\Model\Formation;
 use App\Session\Domain\Model\Inscription;
 use App\Session\Domain\Model\Session;
-use App\Session\Domain\Model\StatutInscription;
+use App\Session\Infrastructure\Doctrine\Entity\Session as SessionEntite;
 
 final readonly class SessionMapper
 {
@@ -38,7 +37,7 @@ final readonly class SessionMapper
             new Inscription(
                 $session,
                 $this->stagiaireMapper->versDomaine($inscription->getStagiaire()),
-                StatutInscription::from($inscription->getStatut()->value),
+                $inscription->getStatut(),
                 $inscription->getDateInscription(),
                 $inscription->getId(),
             );

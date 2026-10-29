@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Session\Infrastructure\Doctrine\Mapper;
 
-use App\Entity\Formation as FormationEntite;
-use App\Entity\Inscription as InscriptionEntite;
-use App\Entity\Session as SessionEntite;
-use App\Entity\Stagiaire as StagiaireEntite;
-use App\Entity\StatutInscription as StatutInscriptionEntite;
 use App\Session\Domain\Model\Inscription;
 use App\Session\Domain\Model\StatutInscription;
+use App\Session\Infrastructure\Doctrine\Entity\Formation as FormationEntite;
+use App\Session\Infrastructure\Doctrine\Entity\Inscription as InscriptionEntite;
+use App\Session\Infrastructure\Doctrine\Entity\Session as SessionEntite;
+use App\Session\Infrastructure\Doctrine\Entity\Stagiaire as StagiaireEntite;
 use App\Session\Infrastructure\Doctrine\Mapper\SessionMapper;
 use App\Session\Infrastructure\Doctrine\Mapper\StagiaireMapper;
 use PHPUnit\Framework\TestCase;
@@ -46,9 +45,9 @@ final class SessionMapperTest extends TestCase
             new \DateTimeImmutable('2026-11-18'),
             3,
         );
-        new InscriptionEntite($entite, new StagiaireEntite('Alice', 'Martin', 'alice.martin@exemple.fr'), StatutInscriptionEntite::CONFIRMEE, new \DateTimeImmutable('2026-09-01 09:12'));
-        new InscriptionEntite($entite, new StagiaireEntite('Bruno', 'Petit', 'bruno.petit@exemple.fr'), StatutInscriptionEntite::ANNULEE);
-        new InscriptionEntite($entite, new StagiaireEntite('Chloé', 'Durand', 'chloe.durand@exemple.fr'), StatutInscriptionEntite::LISTE_ATTENTE);
+        new InscriptionEntite($entite, new StagiaireEntite('Alice', 'Martin', 'alice.martin@exemple.fr'), StatutInscription::CONFIRMEE, new \DateTimeImmutable('2026-09-01 09:12'));
+        new InscriptionEntite($entite, new StagiaireEntite('Bruno', 'Petit', 'bruno.petit@exemple.fr'), StatutInscription::ANNULEE);
+        new InscriptionEntite($entite, new StagiaireEntite('Chloé', 'Durand', 'chloe.durand@exemple.fr'), StatutInscription::LISTE_ATTENTE);
 
         $session = $this->mapper()->versDomaine($entite);
 

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Session\Infrastructure\Doctrine\Repository;
 
-use App\Entity\Inscription as InscriptionEntite;
-use App\Entity\Session as SessionEntite;
-use App\Entity\Stagiaire as StagiaireEntite;
-use App\Entity\StatutInscription as StatutInscriptionEntite;
 use App\Session\Domain\Model\Inscription;
 use App\Session\Domain\Model\Session;
 use App\Session\Domain\Repository\SessionRepository;
+use App\Session\Infrastructure\Doctrine\Entity\Inscription as InscriptionEntite;
+use App\Session\Infrastructure\Doctrine\Entity\Session as SessionEntite;
+use App\Session\Infrastructure\Doctrine\Entity\Stagiaire as StagiaireEntite;
 use App\Session\Infrastructure\Doctrine\Mapper\SessionMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -66,7 +65,7 @@ final readonly class DoctrineSessionRepository implements SessionRepository
             $entite = new InscriptionEntite(
                 $this->entityManager->getReference(SessionEntite::class, $sessionId),
                 $this->entityManager->getReference(StagiaireEntite::class, $stagiaireId),
-                StatutInscriptionEntite::from($inscription->getStatut()->value),
+                $inscription->getStatut(),
                 $inscription->getDateInscription(),
             );
             $this->entityManager->persist($entite);
