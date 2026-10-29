@@ -4,23 +4,36 @@ declare(strict_types=1);
 
 namespace App\Tests\Shared\Application;
 
-use App\Session\Application\Query\ListerSessions;
-use App\Session\Application\Query\ResumeSession;
 use App\Shared\Application\BusDeRequetes;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Messenger\Exception\NoHandlerForMessageException;
+use Symfony\Component\Messenger\Handler\HandlersLocator;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
-final class BusDeRequetesTest extends KernelTestCase
+final class BusDeRequetesTest extends TestCase
 {
     public function testLeBusRenvoieLeResultatDuHandler(): void
     {
-        self::bootKernel();
+        $requete = new \stdClass();
+        $bus = $this->unBus(static fn (\stdClass $recue): array => ['réponse', $recue]);
 
-        $bus = new BusDeRequetes(static::getContainer()->get('query.bus'));
+        self::assertSame(['réponse', $requete], $bus->demander($requete));
+    }
 
-        $sessions = $bus->demander(new ListerSessions());
+    public function testUneRequeteSansHandlerEstRefusee(): void
+    {
+        $bus = new BusDeRequetes(new MessageBus([new HandleMessageMiddleware(new HandlersLocator([]))]));
 
-        self::assertIsArray($sessions);
-        self::assertCount(5, $sessions);
-        self::assertContainsOnlyInstancesOf(ResumeSession::class, $sessions);
+        $this->expectException(NoHandlerForMessageException::class);
+
+        $bus->demander(new \stdClass());
+    }
+
+    private function unBus(callable $handler): BusDeRequetes
+    {
+        return new BusDeRequetes(new MessageBus([
+            new HandleMessageMiddleware(new HandlersLocator([\stdClass::class => [$handler]])),
+        ]));
     }
 }
