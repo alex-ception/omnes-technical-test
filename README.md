@@ -45,19 +45,37 @@ docker compose up        # http://localhost:8000/sessions
 
 ## Architecture
 
+Le code est organisé par contexte métier (`Session/`), découpé en couches (DDD), avec une séparation des commandes (écriture) et des requêtes (lecture) (CQRS) :
+
 ```
 src/
-  Controller/        Controllers HTTP (page HTML et API JSON)
-  Entity/            Modèle : Formation, Session, Stagiaire, Inscription, StatutInscription
-  Repository/        Accès aux données
-  Service/           Services métier (InscriptionService)
-  Exception/         Exceptions métier
-  DataFixtures/      Jeu de données de démonstration, utilisé aussi par les tests
-templates/           Vues Twig
-tests/               PHPUnit : Entity (unitaires), Service et Controller (avec la base de test)
+  Session/
+    Domain/                  Modèle métier pur, sans dépendance à Doctrine ni à Symfony
+      Model/                 Session, Inscription, Stagiaire, Formation, StatutInscription : règles métier
+      Repository/            Interfaces des repositories (SessionRepository, StagiaireRepository)
+      Exception/             Exceptions métier (InscriptionImpossibleException)
+    Application/             Cas d'usage
+      Command/               Écriture : InscrireStagiaire et son handler (command.bus)
+      Query/                 Lecture : ListerSessions, son handler (query.bus) et le DTO ResumeSession
+      InscriptionService     Façade conservée pour le portail stagiaire, délègue à InscrireStagiaire
+    Infrastructure/
+      Doctrine/
+        Entity/              Modèle de persistance : entités Doctrine, mapping par attributs PHP
+        Mapper/              Conversion des entités Doctrine en objets du domaine
+        Repository/          Implémentations Doctrine des repositories du domaine
+    Presentation/
+      Controller/            Controllers HTTP (page HTML et API JSON)
+  Shared/
+    Application/             Briques communes (BusDeRequetes)
+  DataFixtures/              Jeu de données de démonstration, utilisé aussi par les tests
+templates/                   Vues Twig
+tests/                       PHPUnit, même arborescence que src/ : Domain (unitaires), Application,
+                             Infrastructure et Presentation (avec la base de test)
 ```
 
-Base de données : SQLite, un fichier par environnement dans `var/`. Pas de migrations : le schéma est créé depuis les entités par `composer setup`.
+Les commandes et les requêtes passent par `symfony/messenger`, en mode synchrone : `command.bus` (avec transaction Doctrine) et `query.bus`, sans transport.
+
+Base de données : SQLite, un fichier par environnement dans `var/`. Pas de migrations : le schéma est créé depuis les entités Doctrine par `composer setup`.
 
 Tests : chaque test s'exécute dans une transaction annulée à la fin (bundle `dama/doctrine-test-bundle`). Les fixtures sont donc toujours dans leur état initial au début de chaque test.
 
@@ -73,9 +91,9 @@ Tests : chaque test s'exécute dans une transaction annulée à la fin (bundle `
 
 Elles s'appliquent à tout code ajouté ou modifié.
 
-1. **Les règles métier vivent dans le modèle (`src/Entity`) ou dans les services (`src/Service`).** Jamais dans les controllers, jamais dans les templates Twig.
-2. **Les controllers orchestrent, ils ne calculent pas.** Un controller lit la requête, appelle un repository ou un service, renvoie une réponse. Pas de calcul ni de condition métier dedans.
-3. **Un comportement métier est couvert par un test de son propre niveau** (`tests/Entity` ou `tests/Service`), pas uniquement par un test HTTP.
+1. **Les règles métier vivent dans le modèle du domaine (`src/Session/Domain`).** Les handlers de la couche application orchestrent ; jamais de règle dans les controllers, les templates Twig ou les entités Doctrine.
+2. **Les controllers orchestrent, ils ne calculent pas.** Un controller lit la requête, envoie une commande ou une requête (ou appelle un repository ou la façade), renvoie une réponse. Pas de calcul ni de condition métier dedans.
+3. **Un comportement métier est couvert par un test de son propre niveau** (`tests/Session/Domain` ou `tests/Session/Application`), pas uniquement par un test HTTP.
 4. **PHP 8.3 moderne** : `declare(strict_types=1)`, typage complet, attributs PHP (pas d'annotations), `DateTimeImmutable`, `readonly` quand c'est pertinent.
 5. **Pas de nouvelle dépendance Composer** sans justification dans `NOTES.md`.
 6. **Zéro dépréciation.** PHPUnit est configuré avec `failOnDeprecation` : un code qui déclenche une dépréciation fait échouer la suite.
