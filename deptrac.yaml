@@ -1,0 +1,67 @@
+# Dépendances autorisées entre couches et contextes métier (voir « Architecture » dans le README).
+#
+# - Le domaine est pur : il ne dépend que du domaine (de son contexte et de Shared).
+# - L'application dépend du domaine et de Messenger (bus, attribut des handlers), pas du reste du framework.
+# - L'infrastructure (Doctrine, HTTP) peut dépendre de tout.
+# - Shared ne dépend d'aucun contexte métier ; un contexte peut dépendre de Shared.
+deptrac:
+    paths:
+        - ./src
+    layers:
+        - name: SharedDomain
+          collectors:
+              - { type: directory, value: 'src/Shared/Domain/.*' }
+        - name: SharedApplication
+          collectors:
+              - { type: directory, value: 'src/Shared/Application/.*' }
+        - name: SharedInfrastructure
+          collectors:
+              - { type: directory, value: 'src/Shared/Infrastructure/.*' }
+        - name: SessionDomain
+          collectors:
+              - { type: directory, value: 'src/Session/Domain/.*' }
+        - name: SessionApplication
+          collectors:
+              - { type: directory, value: 'src/Session/Application/.*' }
+        - name: SessionInfrastructure
+          collectors:
+              - { type: directory, value: 'src/Session/Infrastructure/.*' }
+        - name: Fixtures
+          collectors:
+              - { type: directory, value: 'src/DataFixtures/.*' }
+        # Dépendances externes
+        - name: Messenger
+          collectors:
+              - { type: classNameRegex, value: '#^Symfony\\Component\\Messenger\\#' }
+        - name: Framework
+          collectors:
+              - { type: classNameRegex, value: '#^(?!Symfony\\Component\\Messenger\\)(Symfony|Doctrine)\\#' }
+    ruleset:
+        SharedDomain: ~
+        SharedApplication:
+            - SharedDomain
+            - Messenger
+        SharedInfrastructure:
+            - SharedDomain
+            - SharedApplication
+            - Messenger
+            - Framework
+        SessionDomain:
+            - SharedDomain
+        SessionApplication:
+            - SessionDomain
+            - SharedDomain
+            - SharedApplication
+            - Messenger
+        SessionInfrastructure:
+            - SessionDomain
+            - SessionApplication
+            - SharedDomain
+            - SharedApplication
+            - SharedInfrastructure
+            - Messenger
+            - Framework
+        Fixtures:
+            - SessionInfrastructure
+            - SessionDomain
+            - Framework

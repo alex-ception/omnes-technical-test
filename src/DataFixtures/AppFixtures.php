@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Entity\Formation;
-use App\Entity\Inscription;
-use App\Entity\Session;
-use App\Entity\Stagiaire;
-use App\Entity\StatutInscription;
+use App\Session\Domain\Model\StatutInscription;
+use App\Session\Infrastructure\Doctrine\Entity\Formation;
+use App\Session\Infrastructure\Doctrine\Entity\Inscription;
+use App\Session\Infrastructure\Doctrine\Entity\Session;
+use App\Session\Infrastructure\Doctrine\Entity\Stagiaire;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
