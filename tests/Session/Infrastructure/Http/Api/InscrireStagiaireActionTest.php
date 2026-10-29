@@ -71,6 +71,45 @@ final class InscrireStagiaireActionTest extends WebTestCase
         self::assertResponseStatusCodeSame(404);
     }
 
+    public function testUneSessionInconnueEstRefusee(): void
+    {
+        $client = static::createClient();
+
+        $this->inscrire($client, 'INCONNUE-01', 'alice.martin@exemple.fr');
+
+        self::assertResponseStatusCodeSame(404);
+        self::assertSame(['erreur' => 'Session INCONNUE-01 inconnue.'], $this->reponseJson($client));
+    }
+
+    public function testLEmailEstObligatoire(): void
+    {
+        $client = static::createClient();
+
+        $this->inscrire($client, 'GIT-QUO-01', '');
+
+        self::assertResponseStatusCodeSame(400);
+        self::assertSame(['erreur' => 'Le champ "email" est obligatoire.'], $this->reponseJson($client));
+    }
+
+    public function testLeMessageDuRefusEstRenvoye(): void
+    {
+        $client = static::createClient();
+
+        // Alice est déjà inscrite (confirmée) à SYMF-ADV-01 dans les fixtures.
+        $this->inscrire($client, 'SYMF-ADV-01', 'alice.martin@exemple.fr');
+
+        self::assertResponseStatusCodeSame(409);
+        self::assertSame(['erreur' => 'alice.martin@exemple.fr est déjà inscrit(e) à la session SYMF-ADV-01.'], $this->reponseJson($client));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function reponseJson(KernelBrowser $client): array
+    {
+        return json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+    }
+
     private function inscrire(KernelBrowser $client, string $codeSession, string $email): void
     {
         $client->request(
