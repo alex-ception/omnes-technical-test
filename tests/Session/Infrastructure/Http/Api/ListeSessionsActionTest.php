@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Session\Presentation\Http\Api;
+namespace App\Tests\Session\Infrastructure\Http\Api;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

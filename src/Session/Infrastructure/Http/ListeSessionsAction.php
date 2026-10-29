@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Session\Presentation\Http;
+namespace App\Session\Infrastructure\Http;
 
 use App\Session\Application\Query\ListerSessions;
 use App\Shared\Application\BusDeRequetes;

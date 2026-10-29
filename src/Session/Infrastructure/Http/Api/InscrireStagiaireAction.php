@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Session\Presentation\Http\Api;
+namespace App\Session\Infrastructure\Http\Api;
 
 use App\Session\Application\InscriptionService;
 use App\Session\Domain\Exception\InscriptionImpossibleException;

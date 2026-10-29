@@ -45,7 +45,7 @@ docker compose up        # http://localhost:8000/sessions
 
 ## Architecture
 
-Le code est organisé par contexte métier (`Session/`), découpé en couches (DDD), avec une séparation des commandes (écriture) et des requêtes (lecture) (CQRS) :
+Le code est organisé par contexte métier (`Session/`), découpé en couches domaine, application et infrastructure (DDD), avec une séparation des commandes (écriture) et des requêtes (lecture) (CQRS) :
 
 ```
 src/
@@ -58,19 +58,18 @@ src/
       Command/               Écriture : InscrireStagiaire et son handler (command.bus)
       Query/                 Lecture : ListerSessions, son handler (query.bus) et le DTO ResumeSession
       InscriptionService     Façade conservée pour le portail stagiaire, délègue à InscrireStagiaire
-    Infrastructure/
+    Infrastructure/          Adaptateurs vers l'extérieur
       Doctrine/
         Entity/              Modèle de persistance : entités Doctrine, mapping par attributs PHP
         Mapper/              Conversion des entités Doctrine en objets du domaine
         Repository/          Implémentations Doctrine des repositories du domaine
-    Presentation/
       Http/                  Une action invokable par route (page HTML, et API JSON dans Api/)
   Shared/
     Application/             Briques communes (BusDeRequetes)
   DataFixtures/              Jeu de données de démonstration, utilisé aussi par les tests
 templates/                   Vues Twig
-tests/                       PHPUnit, même arborescence que src/ : Domain (unitaires), Application,
-                             Infrastructure et Presentation (avec la base de test)
+tests/                       PHPUnit, même arborescence que src/ : Domain (unitaires), Application
+                             et Infrastructure (avec la base de test)
 ```
 
 Les commandes et les requêtes passent par `symfony/messenger`, en mode synchrone : `command.bus` (avec transaction Doctrine) et `query.bus`, sans transport.
