@@ -42,6 +42,7 @@ Ce qui était faux ou à corriger :
 
 Ce que vous auriez fait en plus ou autrement.
 
+- **Architecture DDD/CQRS** : commencée hors du périmètre du ticket, sur la branche `feat/ddd-cqrs` ([PR #8](https://github.com/alex-ception/omnes-technical-test/pull/8), issue #5), volontairement non mergée pour que `main` reste conforme aux conventions du README d'origine. Modèle de domaine pur avec entités Doctrine et mappers séparés en infrastructure, commandes et requêtes sur des bus `symfony/messenger` synchrones, une action invokable par route, `ExceptionSubscriber` pour les erreurs de l'API, et règles de dépendance entre couches vérifiées par deptrac dans `composer test`. Comportement, routes et format de l'API inchangés.
 - **Promotion depuis la liste d'attente** : quand une inscription confirmée est annulée, promouvoir automatiquement la première personne en attente (par date d'inscription), avec notification. À valider avec l'équipe pédagogique.
 - **Concurrence** : deux inscriptions simultanées sur la dernière place peuvent toutes deux être confirmées (vérification puis écriture sans verrou). Un verrou pessimiste sur la session (`SELECT … FOR UPDATE`, ou verrou applicatif) ou un contrôle en base réglerait le problème.
 - **Visibilité de la liste d'attente** : afficher le nombre de personnes en attente sur la page `/sessions` et l'exposer dans l'API (champ ajouté, sans casser l'existant).
